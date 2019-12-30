@@ -1,12 +1,19 @@
 import {
     SET_CURRENT_FORUM,
-    STORE_FORUM_POSTS
+    STORE_FORUM_POSTS,
+    SHOW_SPINNER,
+    HIDE_SPINNER,
+    SET_INTERVAL,
+    SHOW_TOAST,
+    HIDE_TOAST
 } from "../actions/types";
 
 // const isEmpty = require("is-empty");
 
 const initialState = {
-    currentForum: ''
+    currentForum: '',
+    toastMessage: '',
+    isToastShowing: false
 };
 export default function (state = initialState, action) {
     switch (action.type) {
@@ -37,6 +44,60 @@ export default function (state = initialState, action) {
                     break;
             }
             return updatedState;
+        case SHOW_SPINNER:
+            return {
+                ...state,
+                loading: true
+            };
+        case HIDE_SPINNER:
+            return {
+                ...state,
+                loading: false
+            };
+        case SHOW_TOAST:
+            return {
+                ...state,
+                isToastShowing: true,
+                toastMessage: action.message
+            };
+        case HIDE_TOAST:
+            return {
+                ...state,
+                isToastShowing: false
+            };
+        case SET_INTERVAL:
+                const newlyUpdatedState = {
+                    ...state
+                };
+    
+                switch (action.forumType) {
+                    case 'premierleague':
+                        newlyUpdatedState.premierLeagueInterval = action.interval;
+                        clearInterval(newlyUpdatedState.serieAInterval);
+                        clearInterval(newlyUpdatedState.laLigaInterval);
+                        clearInterval(newlyUpdatedState.allsvenskanInterval);
+                        return newlyUpdatedState;
+                    case 'seriea':
+                            newlyUpdatedState.serieAInterval = action.interval;
+                            clearInterval(newlyUpdatedState.premierLeagueInterval);
+                            clearInterval(newlyUpdatedState.laLigaInterval);
+                            clearInterval(newlyUpdatedState.allsvenskanInterval);
+                        return newlyUpdatedState;
+                    case 'laliga':
+                            newlyUpdatedState.laLigaInterval = action.interval;
+                            clearInterval(newlyUpdatedState.premierLeagueInterval);
+                            clearInterval(newlyUpdatedState.serieAInterval);
+                            clearInterval(newlyUpdatedState.allsvenskanInterval);
+                        return newlyUpdatedState;
+                    case 'allsvenskan':
+                            newlyUpdatedState.allsvenskanInterval = action.interval;
+                            clearInterval(newlyUpdatedState.premierLeagueInterval);
+                            clearInterval(newlyUpdatedState.laLigaInterval);
+                            clearInterval(newlyUpdatedState.serieAInterval);
+                        return newlyUpdatedState;
+                    default:
+                        return state;
+                }
         default:
             return state;
     }
