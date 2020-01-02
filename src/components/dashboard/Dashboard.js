@@ -31,13 +31,14 @@ class Dashboard extends Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col>
+                    <Col style={{ textAlign: 'center' }}>
                         <h4>
-                            <b>Hej,</b> {user.name.split(" ")[0]}!
-                            <p className="flow-text grey-text text-darken-1">
-                                Välkommen till Fotbollssnack.
-                            </p>
+                            <strong>Hej,</strong> {user.name.split(" ")[0]}!
                         </h4>
+                        <h5>
+                            Välkommen till Fotbollssnack.
+                        </h5>
+                        <p>Välj ditt favoritforum och börja diskutera fotboll!</p>
                     </Col>
                 </Row>
             </Container>

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import {
-    SET_CURRENT_FORUM, GET_ERRORS, STORE_FORUM_POSTS, SHOW_SPINNER, HIDE_SPINNER, SET_INTERVAL, SHOW_TOAST, HIDE_TOAST
+    SET_CURRENT_FORUM, GET_ERRORS, STORE_FORUM_POSTS, SHOW_SPINNER, HIDE_SPINNER, SET_INTERVAL, SHOW_TOAST, HIDE_TOAST, PAGINATE_POSTS, SET_CURRENT_FORUM_PAGE
 } from './types';
 
 // Set logged in user
@@ -20,6 +20,21 @@ export const storeForumPosts = (posts, forumType) => {
     };
 };
 
+export const paginatePosts = forumType => {
+    return {
+        type: PAGINATE_POSTS,
+        forumType
+    };
+};
+
+export const setCurrentForumPage = (forumPageId, forumType) => {
+    return {
+        type: SET_CURRENT_FORUM_PAGE,
+        forumPageId,
+        forumType
+    };
+};
+
 export const showSpinner = () => {
     return {
         type: SHOW_SPINNER
@@ -32,10 +47,12 @@ export const hideSpinner = () => {
     };
 };
 
-export const showToast = message => {
+export const showToast = (message, colorClass) => {
     return {
         type: SHOW_TOAST,
-        message
+        message,
+        colorClass
+        // toastType
     };
 };
 
@@ -62,19 +79,24 @@ export const addForumPost = postData => dispatch => {
         .then(res => {
             dispatch(hideSpinner());
             dispatch(showSpinner());
+            dispatch(showToast("Inlägget har lagts till.", 'text-success'));
             axios
                 .get('http://localhost:3000/api/posts/forums/' + postData.forumType)
                 .then(res => {
-                    dispatch(showToast("Inlägget har lagts till."));
                     dispatch(hideSpinner());
                     dispatch(storeForumPosts(res.data, postData.forumType));
                 })
-                .catch(err => dispatch({
-                    type: GET_ERRORS,
-                    payload: err.response.data
-                }));
+                .catch(err => {
+                    dispatch(hideSpinner());
+                    dispatch({
+                        type: GET_ERRORS,
+                        payload: err.response.data
+                    })
+                });
         })
         .catch(err => {
+            dispatch(hideSpinner());
+            dispatch(showToast("Inlägget har ej lagts till.", 'text-danger'));
             dispatch({
                 type: GET_ERRORS,
                 payload: err.response.data
@@ -90,12 +112,13 @@ export const updateForumPost = postData => dispatch => {
             axios
                 .get('http://localhost:3000/api/posts/forums/' + postData.forumType)
                 .then(res => {
-                    dispatch(showToast("Inlägget har uppdaterats."));
+                    dispatch(showToast("Inlägget har redigerats.", 'text-success'));
                     dispatch(hideSpinner());
                     dispatch(storeForumPosts(res.data, postData.forumType));
                 })
                 .catch(err => {
-                    dispatch(showToast(err.response.data));
+                    dispatch(hideSpinner());
+                    dispatch(showToast("Något gick fel vid omladdningen av inlägg.", 'text-danger'));
                     dispatch({
                         type: GET_ERRORS,
                         payload: err.response.data
@@ -103,6 +126,8 @@ export const updateForumPost = postData => dispatch => {
                 });
         })
         .catch(err => {
+            dispatch(hideSpinner());
+            dispatch(showToast("Inlägget har ej uppdaterats.", 'text-danger'));
             dispatch(showToast(err.response.data));
             dispatch({
                 type: GET_ERRORS,
@@ -119,12 +144,13 @@ export const deleteForumPost = postData => dispatch => {
             axios
                 .get('http://localhost:3000/api/posts/forums/' + postData.forumType)
                 .then(res => {
-                    dispatch(showToast("Inlägget har raderats."));
+                    dispatch(showToast("Inlägget har raderats.", 'text-success'));
                     dispatch(hideSpinner());
                     dispatch(storeForumPosts(res.data, postData.forumType));
                 })
                 .catch(err => {
-                    dispatch(showToast(err.response.data));
+                    dispatch(showToast("Något gick fel vid omladdningen av inlägg.", 'text-danger'));
+                    dispatch(hideSpinner());
                     dispatch({
                         type: GET_ERRORS,
                         payload: err.response.data
@@ -132,7 +158,8 @@ export const deleteForumPost = postData => dispatch => {
                 });
         })
         .catch(err => {
-            dispatch(showToast(err.response.data));
+            dispatch(hideSpinner());
+            dispatch(showToast("Inlägget har ej raderats.", 'text-danger'));
             dispatch({
                 type: GET_ERRORS,
                 payload: err.response.data
@@ -143,15 +170,21 @@ export const deleteForumPost = postData => dispatch => {
 
 export const fetchForumPosts = forumType => dispatch => {
     dispatch(showSpinner());
+    console.log('Fetching posts for forum of type ', forumType);
     axios
         .get('http://localhost:3000/api/posts/forums/' + forumType)
         .then(res => {
+            console.log('Fetch successful..');
             dispatch(hideSpinner());
             dispatch(storeForumPosts(res.data, forumType));
+            // dispatch(paginatePosts(forumType));
         })
-        .catch(err => dispatch({
-            type: GET_ERRORS,
-            payload: err.response.data
-        }));
+        .catch(err => {
+            dispatch(hideSpinner());
+            console.log('Failed to fetch.');
+            dispatch({
+                type: GET_ERRORS
+            })
+        });
 };
 

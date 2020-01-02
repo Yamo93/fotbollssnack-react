@@ -53,7 +53,7 @@ class Allsvenskan extends Component {
     closeEditModal = () => {
         this.setState({ isEditModalOpen: false });
     }
-    
+
     openDeleteModal = id => {
         const deletedPost = this.props.forum.allsvenskanPosts.find(post => id === post._id);
         this.setState({
@@ -77,7 +77,7 @@ class Allsvenskan extends Component {
 
         this.setState({ updatedText: '', isEditModalOpen: false });
     }
-    
+
     deletePost = () => {
         this.props.onDeleteForumPost({ id: this.state.deletedPost._id, forumType: 'allsvenskan' });
 
@@ -124,26 +124,26 @@ class Allsvenskan extends Component {
                 </>
             );
         }
-        
+
         let spinner = null;
 
         if (this.props.forum.loading) {
-            spinner =  <Spinner animation="border" variant="primary" />;
+            spinner = <Spinner animation="border" variant="primary" />;
         }
 
         return (
             <Container style={{ height: "75vh", marginTop: '3em', position: 'relative' }}>
-                                <Toast style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        zIndex: 100
-                        }} onClose={this.props.onHideToast} show={this.props.forum.isToastShowing} delay={3000} autohide>
-                <Toast.Header>
-                    <strong className="mr-auto">Meddelande</strong>
-                    <small></small>
-                </Toast.Header>
-                <Toast.Body>{this.props.forum.toastMessage}</Toast.Body>
+                <Toast style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    zIndex: 100
+                }} onClose={this.props.onHideToast} show={this.props.forum.isToastShowing} delay={3000} autohide>
+                    <Toast.Header>
+                        <strong className="mr-auto">Meddelande</strong>
+                        <small></small>
+                    </Toast.Header>
+                    <Toast.Body className={this.props.forum.toastColorClass}>{this.props.forum.toastMessage}</Toast.Body>
                 </Toast>
                 <EditModal isEditModalOpen={this.state.isEditModalOpen} closeEditModal={this.closeEditModal} updatedText={this.state.updatedText} updatedTextChangeHandler={this.updatedTextChangeHandler} updatePost={this.updatePost} />
                 <DeleteModal isDeleteModalOpen={this.state.isDeleteModalOpen} closeDeleteModal={this.closeDeleteModal} deletedPost={this.state.deletedPost} deletePost={this.deletePost} />
@@ -158,13 +158,24 @@ class Allsvenskan extends Component {
                     </Col>
                 </Row>
                 <Row>
+                    <Col>
+                        <Button style={{ marginBottom: '1em' }}
+                            variant="primary"
+                            disabled={this.props.forum.loading}
+                            onClick={forumType => this.props.onFetchForumPosts('allsvenskan')}
+                        >
+                            {this.props.forum.loading ? 'Laddar om...' : 'Ladda om inläggen'}
+                        </Button>
+                    </Col>
+                </Row>
+                <Row>
                     <Col style={{ marginBottom: '2em' }}>
                         {postInputField}
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                    {spinner}
+                        {spinner}
                         <ListGroup>
                             {this.props.forum.allsvenskanPosts ? this.props.forum.allsvenskanPosts.map(ap => (
                                 <ListGroup.Item key={ap._id}>

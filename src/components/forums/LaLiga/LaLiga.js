@@ -36,7 +36,7 @@ class LaLiga extends Component {
     textChangeHandler = value => {
         this.setState({ postText: value });
     }
-    
+
     updatedTextChangeHandler = value => {
         this.setState({ updatedText: value });
     }
@@ -71,7 +71,7 @@ class LaLiga extends Component {
 
         this.setState({ postText: '' });
     }
-    
+
     updatePost = () => {
         this.props.onUpdateForumPost({ id: this.state.updatedPost._id, text: this.state.updatedText, forumType: 'laliga' });
 
@@ -125,26 +125,26 @@ class LaLiga extends Component {
                 </>
             );
         }
-        
+
         let spinner = null;
 
         if (this.props.forum.loading) {
-            spinner =  <Spinner animation="border" variant="primary" />;
+            spinner = <Spinner animation="border" variant="primary" />;
         }
 
         return (
             <Container style={{ height: "75vh", marginTop: '3em', position: 'relative' }}>
-                                <Toast style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        zIndex: 100
-                        }} onClose={this.props.onHideToast} show={this.props.forum.isToastShowing} delay={3000} autohide>
-                <Toast.Header>
-                    <strong className="mr-auto">Meddelande</strong>
-                    <small></small>
-                </Toast.Header>
-                <Toast.Body>{this.props.forum.toastMessage}</Toast.Body>
+                <Toast style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    zIndex: 100
+                }} onClose={this.props.onHideToast} show={this.props.forum.isToastShowing} delay={3000} autohide>
+                    <Toast.Header>
+                        <strong className="mr-auto">Meddelande</strong>
+                        <small></small>
+                    </Toast.Header>
+                    <Toast.Body className={this.props.forum.toastColorClass}>{this.props.forum.toastMessage}</Toast.Body>
                 </Toast>
                 <EditModal isEditModalOpen={this.state.isEditModalOpen} closeEditModal={this.closeEditModal} updatedText={this.state.updatedText} updatedTextChangeHandler={this.updatedTextChangeHandler} updatePost={this.updatePost} />
                 <DeleteModal isDeleteModalOpen={this.state.isDeleteModalOpen} closeDeleteModal={this.closeDeleteModal} deletedPost={this.state.deletedPost} deletePost={this.deletePost} />
@@ -156,6 +156,17 @@ class LaLiga extends Component {
                 <Row>
                     <Col>
                         <h2>La Liga</h2>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Button style={{ marginBottom: '1em' }}
+                            variant="primary"
+                            disabled={this.props.forum.loading}
+                            onClick={forumType => this.props.onFetchForumPosts('laliga')}
+                        >
+                            {this.props.forum.loading ? 'Laddar om...' : 'Ladda om inläggen'}
+                        </Button>
                     </Col>
                 </Row>
                 <Row>

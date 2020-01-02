@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
+import Pagination from 'react-bootstrap/Pagination';
 
 import EditModal from '../../layout/EditModal/EditModal';
 import DeleteModal from '../../layout/DeleteModal/DeleteModal';
@@ -20,7 +21,7 @@ import { connect } from "react-redux";
 
 import moment from 'moment';
 
-import { setCurrentForum, fetchForumPosts, addForumPost, updateForumPost, deleteForumPost, setForumInterval, hideToast } from '../../../actions/forumActions';
+import { setCurrentForum, fetchForumPosts, addForumPost, updateForumPost, deleteForumPost, setForumInterval, hideToast, setCurrentForumPage } from '../../../actions/forumActions';
 
 class SerieA extends Component {
     state = {
@@ -94,6 +95,8 @@ class SerieA extends Component {
 
         this.props.onSetInterval('seriea', intervalID);
 
+        this.props.onSetCurrentForumPage(1, 'seriea');
+
     }
 
     render() {
@@ -128,22 +131,22 @@ class SerieA extends Component {
         let spinner = null;
 
         if (this.props.forum.loading) {
-            spinner =  <Spinner animation="border" variant="primary" />;
+            spinner = <Spinner animation="border" variant="primary" />;
         }
 
         return (
             <Container style={{ height: "75vh", marginTop: '3em', position: 'relative' }}>
                 <Toast style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        zIndex: 100
-                        }} onClose={this.props.onHideToast} show={this.props.forum.isToastShowing} delay={3000} autohide>
-                <Toast.Header>
-                    <strong className="mr-auto">Meddelande</strong>
-                    <small></small>
-                </Toast.Header>
-                <Toast.Body>{this.props.forum.toastMessage}</Toast.Body>
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    zIndex: 100
+                }} onClose={this.props.onHideToast} show={this.props.forum.isToastShowing} delay={3000} autohide>
+                    <Toast.Header>
+                        <strong className="mr-auto">Meddelande</strong>
+                        <small></small>
+                    </Toast.Header>
+                    <Toast.Body className={this.props.forum.toastColorClass}>{this.props.forum.toastMessage}</Toast.Body>
                 </Toast>
                 <EditModal isEditModalOpen={this.state.isEditModalOpen} closeEditModal={this.closeEditModal} updatedText={this.state.updatedText} updatedTextChangeHandler={this.updatedTextChangeHandler} updatePost={this.updatePost} />
                 <DeleteModal isDeleteModalOpen={this.state.isDeleteModalOpen} closeDeleteModal={this.closeDeleteModal} deletedPost={this.state.deletedPost} deletePost={this.deletePost} />
@@ -158,6 +161,17 @@ class SerieA extends Component {
                     </Col>
                 </Row>
                 <Row>
+                    <Col>
+                        <Button style={{ marginBottom: '1em' }}
+                            variant="primary"
+                            disabled={this.props.forum.loading}
+                            onClick={forumType => this.props.onFetchForumPosts('seriea')}
+                        >
+                            {this.props.forum.loading ? 'Laddar om...' : 'Ladda om inläggen'}
+                        </Button>
+                    </Col>
+                </Row>
+                <Row>
                     <Col style={{ marginBottom: '2em' }}>
                         {postInputField}
                     </Col>
@@ -166,7 +180,7 @@ class SerieA extends Component {
                     <Col>
                         {spinner}
                         <ListGroup>
-                            {this.props.forum.serieAPosts ? this.props.forum.serieAPosts.map(sap => (
+                            {this.props.forum.serieAPaginatedPostsToShow ? this.props.forum.serieAPaginatedPostsToShow.map(sap => sap ? (
                                 <ListGroup.Item key={sap._id}>
                                     <div className="d-flex w-100 justify-content-between">
                                         <h5 className="mb-1">{sap.userName}</h5>
@@ -185,9 +199,15 @@ class SerieA extends Component {
                                     </ButtonToolbar>) : null}
                                 </ListGroup.Item>
 
-                            )) : null}
+                            ) : null) : null}
                         </ListGroup>
-
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Pagination>
+                            {this.props.forum.serieAPostPages ? this.props.forum.serieAPostPages.map(postPage => <Pagination.Item key={postPage} onClick={(forumPageId, forumType) => this.props.onSetCurrentForumPage(postPage, 'seriea')} active={this.props.forum.currentSerieAForumPage === postPage}>{postPage}</Pagination.Item>) : null}
+                        </Pagination>
                     </Col>
                 </Row>
             </Container>
@@ -208,7 +228,8 @@ const mapDispatchToProps = dispatch => {
         onUpdateForumPost: postData => dispatch(updateForumPost(postData)),
         onDeleteForumPost: postData => dispatch(deleteForumPost(postData)),
         onSetInterval: (forumType, interval) => dispatch(setForumInterval(forumType, interval)),
-        onHideToast: () => dispatch(hideToast())
+        onHideToast: () => dispatch(hideToast()),
+        onSetCurrentForumPage: (forumPageId, forumType) => dispatch(setCurrentForumPage(forumPageId, forumType))
     };
 };
 

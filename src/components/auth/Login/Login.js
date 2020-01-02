@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../../actions/authActions";
-import classnames from "classnames";
 
 class Login extends Component {
     constructor() {
@@ -64,36 +63,36 @@ class Login extends Component {
                         <Link to="/" className="btn-flat waves-effect">
                             Tillbaka till startsidan
                         </Link>
-                        <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-                            <h4>
-                                <b>Logga in</b>
-                            </h4>
-                            <p className="grey-text text-darken-1">
-                                Ny på sidan? <Link to="/register">Bli medlem här.</Link>
-                            </p>
-                        </div>
+                        <h4>
+                            <b>Logga in</b>
+                        </h4>
+                        <p className="grey-text text-darken-1">
+                            Ny på sidan? <Link to="/register">Bli medlem här.</Link>
+                        </p>
+
                         <Form noValidate onSubmit={this.onSubmit}>
                             <Form.Group>
                                 <Form.Label htmlFor="email">E-postadress</Form.Label>
                                 <Form.Control type="email" placeholder="E-postadress" onChange={this.onChange}
                                     value={this.state.email}
-                                    error={errors.email}
+                                    isInvalid={errors.email}
                                     id="email"
-                                    className={classnames("", {
-                                        invalid: errors.email || errors.emailnotfound
-                                    })} />
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.email}
+                                </Form.Control.Feedback>
                             </Form.Group>
 
                             <Form.Group>
                                 <Form.Label htmlFor="password">Lösenord</Form.Label>
                                 <Form.Control type="password" placeholder="Lösenord" onChange={this.onChange}
                                     value={this.state.password}
-                                    error={errors.password}
+                                    isInvalid={errors.password}
                                     id="password"
-                                    className={classnames("", {
-                                        invalid: errors.password || errors.passwordincorrect
-                                    })}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.password}
+                                </Form.Control.Feedback>
                             </Form.Group>
                             <Button variant="primary" type="submit">
                                 Logga in

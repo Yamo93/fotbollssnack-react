@@ -12,3 +12,6 @@ export const SET_INTERVAL = "SET_INTERVAL";
 
 export const SHOW_TOAST = "SHOW_TOAST";
 export const HIDE_TOAST = "HIDE_TOAST";
+
+export const PAGINATE_POSTS = "PAGINATE_POSTS";
+export const SET_CURRENT_FORUM_PAGE = "SET_CURRENT_FORUM_PAGE";
