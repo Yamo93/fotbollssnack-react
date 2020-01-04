@@ -75,13 +75,13 @@ export const setForumInterval = (forumType, interval) => {
 export const addForumPost = postData => dispatch => {
     dispatch(showSpinner());
     axios
-        .post('http://localhost:3000/api/posts/', postData)
+        .post('https://murmuring-citadel-51726.herokuapp.com/api/posts/', postData)
         .then(res => {
             dispatch(hideSpinner());
             dispatch(showSpinner());
             dispatch(showToast("Inlägget har lagts till.", 'text-success'));
             axios
-                .get('http://localhost:3000/api/posts/forums/' + postData.forumType)
+                .get('https://murmuring-citadel-51726.herokuapp.com/api/posts/forums/' + postData.forumType)
                 .then(res => {
                     dispatch(hideSpinner());
                     dispatch(storeForumPosts(res.data, postData.forumType));
@@ -106,11 +106,11 @@ export const addForumPost = postData => dispatch => {
 
 export const updateForumPost = postData => dispatch => {
     axios
-        .put('http://localhost:3000/api/posts/' + postData.id, postData)
+        .put('https://murmuring-citadel-51726.herokuapp.com/api/posts/' + postData.id, postData)
         .then(res => {
             dispatch(showSpinner());
             axios
-                .get('http://localhost:3000/api/posts/forums/' + postData.forumType)
+                .get('https://murmuring-citadel-51726.herokuapp.com/api/posts/forums/' + postData.forumType)
                 .then(res => {
                     dispatch(showToast("Inlägget har redigerats.", 'text-success'));
                     dispatch(hideSpinner());
@@ -138,11 +138,11 @@ export const updateForumPost = postData => dispatch => {
 
 export const deleteForumPost = postData => dispatch => {
     axios
-        .delete('http://localhost:3000/api/posts/' + postData.id)
+        .delete('https://murmuring-citadel-51726.herokuapp.com/api/posts/' + postData.id)
         .then(res => {
             dispatch(showSpinner());
             axios
-                .get('http://localhost:3000/api/posts/forums/' + postData.forumType)
+                .get('https://murmuring-citadel-51726.herokuapp.com/api/posts/forums/' + postData.forumType)
                 .then(res => {
                     dispatch(showToast("Inlägget har raderats.", 'text-success'));
                     dispatch(hideSpinner());
@@ -171,7 +171,7 @@ export const deleteForumPost = postData => dispatch => {
 export const fetchForumPosts = forumType => dispatch => {
     dispatch(showSpinner());
     axios
-        .get('http://localhost:3000/api/posts/forums/' + forumType)
+        .get('https://murmuring-citadel-51726.herokuapp.com/api/posts/forums/' + forumType)
         .then(res => {
             dispatch(hideSpinner());
             dispatch(storeForumPosts(res.data, forumType));

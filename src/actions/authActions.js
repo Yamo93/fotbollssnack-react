@@ -14,7 +14,7 @@ import {
 export const registerUser = (userData, history) => dispatch => {
     console.log(userData);
     axios
-        .post("http://localhost:3000/api/users/register", userData)
+        .post("https://murmuring-citadel-51726.herokuapp.com/api/users/register", userData)
         .then(res => history.push("/login")) // re-direct to login on successful register
         .catch(err =>
             dispatch({
@@ -27,7 +27,7 @@ export const registerUser = (userData, history) => dispatch => {
 // Login - get user token
 export const loginUser = userData => dispatch => {
     axios
-        .post("http://localhost:3000/api/users/login", userData)
+        .post("https://murmuring-citadel-51726.herokuapp.com/api/users/login", userData)
         .then(res => {
             // Save to localStorage
             // Set token to localStorage
@@ -61,7 +61,7 @@ export const clearErrors = () => dispatch => {
 
 // Get user info
 export const getUserInfoById = userId => dispatch => {
-    axios.get("http://localhost:3000/api/users/getuserinfo/" + userId)
+    axios.get("https://murmuring-citadel-51726.herokuapp.com/api/users/getuserinfo/" + userId)
     .then(res => {
         dispatch(setUserInfo(res.data));
     })
