@@ -1,6 +1,14 @@
-import { GET_ERRORS } from "../actions/types";
+import { GET_ERRORS, CLEAR_ERRORS } from "../actions/types";
 
-const initialState = {};
+const initialState = {
+    payload: {
+        name: '',
+        email: '',
+        password: '',
+        password2: '',
+        nickname: ''
+    }
+};
 
 export default function (state = initialState, action) {
     switch (action.type) {
@@ -9,6 +17,17 @@ export default function (state = initialState, action) {
                 ...state,
                 payload: action.payload
             };
+        case CLEAR_ERRORS: 
+        return {
+            ...state,
+            payload: {
+                name: '',
+                email: '',
+                password: '',
+                password2: '',
+                nickname: ''
+            }
+        };
         default:
             return state;
     }

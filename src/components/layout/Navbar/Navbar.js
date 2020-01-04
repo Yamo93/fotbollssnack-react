@@ -28,13 +28,12 @@ class MainNavbar extends Component {
                         <Nav.Item>
                             {this.props.auth.isAuthenticated ? <Nav.Link as={Link} to="/" onClick={this.onLogoutClick}>Logga ut</Nav.Link> : <Nav.Link as={Link} to="/login">Logga in</Nav.Link>}
                         </Nav.Item>
-                        <NavDropdown title="Inställningar" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                        {this.props.auth.isAuthenticated ? <NavDropdown title="Inställningar" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="#/3.1">Uppdatera profiluppgifter</NavDropdown.Item>
+                            <NavDropdown.Item href="#/3.2">Uppdatera användarinställningar</NavDropdown.Item>
                             <NavDropdown.Divider />
-                            <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                        </NavDropdown>
+                            <NavDropdown.Item href="#/3.3">Radera konto</NavDropdown.Item>
+                        </NavDropdown> : null}
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

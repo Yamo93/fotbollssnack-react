@@ -11,6 +11,7 @@ import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
 import Pagination from 'react-bootstrap/Pagination';
+import Badge from 'react-bootstrap/Badge';
 
 import EditModal from '../../layout/EditModal/EditModal';
 import DeleteModal from '../../layout/DeleteModal/DeleteModal';
@@ -114,7 +115,7 @@ class SerieA extends Component {
                             aria-label="Username"
                             aria-describedby="basic-addon1"
                             disabled
-                            value={this.props.auth.user.name.split(' ')[0]}
+                            value={this.props.auth.user.nickname ? this.props.auth.user.nickname : this.props.auth.user.name.split(' ')[0]}
                         />
                     </InputGroup>
                     <InputGroup style={{ marginBottom: '1em' }}>
@@ -135,7 +136,7 @@ class SerieA extends Component {
         }
 
         return (
-            <Container style={{ height: "75vh", marginTop: '3em', position: 'relative' }}>
+            <Container style={{ marginTop: '3em', position: 'relative' }}>
                 <Toast style={{
                     position: 'absolute',
                     top: 0,
@@ -178,12 +179,23 @@ class SerieA extends Component {
                 </Row>
                 <Row>
                     <Col>
+                        <Pagination>
+                            {this.props.forum.serieAPostPages ? this.props.forum.serieAPostPages.map(postPage => <Pagination.Item key={postPage} onClick={(forumPageId, forumType) => this.props.onSetCurrentForumPage(postPage, 'seriea')} active={this.props.forum.currentSerieAForumPage === postPage}>{postPage}</Pagination.Item>) : null}
+                        </Pagination>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
                         {spinner}
                         <ListGroup>
                             {this.props.forum.serieAPaginatedPostsToShow ? this.props.forum.serieAPaginatedPostsToShow.map(sap => sap ? (
                                 <ListGroup.Item key={sap._id}>
                                     <div className="d-flex w-100 justify-content-between">
-                                        <h5 className="mb-1">{sap.userName}</h5>
+                                        <h5 className="mb-1">{sap.nickname ? sap.nickname : sap.userName}
+                                        {sap.favoriteclub ? <Badge style={{ marginLeft: '5px', fontSize: '12px' }} pill variant="primary">
+                                            {sap.favoriteclub}
+                                        </Badge> : null}
+                                        </h5>
                                         <small>{sap.updatedDate ? <span style={{ color: 'red' }}>(Redigerad {moment(sap.updatedDate).format('YYYY-MM-DD HH:mm')})</span> : null} {moment(sap.date).format('YYYY-MM-DD HH:mm')}</small>
                                     </div>
                                     <div className="d-flex w-100 justify-content-start">
@@ -201,13 +213,6 @@ class SerieA extends Component {
 
                             ) : null) : null}
                         </ListGroup>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <Pagination>
-                            {this.props.forum.serieAPostPages ? this.props.forum.serieAPostPages.map(postPage => <Pagination.Item key={postPage} onClick={(forumPageId, forumType) => this.props.onSetCurrentForumPage(postPage, 'seriea')} active={this.props.forum.currentSerieAForumPage === postPage}>{postPage}</Pagination.Item>) : null}
-                        </Pagination>
                     </Col>
                 </Row>
             </Container>

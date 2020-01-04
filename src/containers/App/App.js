@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import jwt_decode from 'jwt-decode';
 import setAuthToken from '../../utils/setAuthToken';
-import { setCurrentUser, logoutUser } from '../../actions/authActions';
+import { setCurrentUser, logoutUser, getUserInfoById } from '../../actions/authActions';
 
 import { Provider } from 'react-redux';
 import store from '../../store';
@@ -13,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Navbar from "../../components/layout/Navbar/Navbar";
 import Landing from "../../components/layout/Landing/Landing";
+import Footer from '../../components/layout/Footer/Footer';
 import Register from '../../components/auth/Register/Register';
 import Login from '../../components/auth/Login/Login';
 import PrivateRoute from '../../components/private-route/PrivateRoute';
@@ -32,6 +33,7 @@ if (localStorage.jwtToken) {
   const decoded = jwt_decode(token);
   // Set user and isAuthenticated
   store.dispatch(setCurrentUser(decoded));
+  store.dispatch(getUserInfoById(decoded.id));
   // Check for expired token
   const currentTime = Date.now() / 1000; // to get in milliseconds
   if (decoded.exp < currentTime) {
@@ -59,6 +61,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
             </Switch>
+            <Footer />
           </div>
         </Router>
       </Provider>

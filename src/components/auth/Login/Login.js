@@ -10,7 +10,7 @@ import Button from 'react-bootstrap/Button';
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { loginUser } from "../../../actions/authActions";
+import { loginUser, clearErrors } from "../../../actions/authActions";
 
 class Login extends Component {
     constructor() {
@@ -23,6 +23,8 @@ class Login extends Component {
     }
 
     componentDidMount() {
+        // Rensar gamla felmeddelanden
+        this.props.clearErrors();
         // If logged in and user navigates to Login page, should redirect them to dashboard
         if (this.props.auth.isAuthenticated) {
             this.props.history.push("/dashboard");
@@ -54,8 +56,6 @@ class Login extends Component {
         this.props.loginUser(userData); // since we handle the redirect within our component, we don't need to pass in this.props.history as a parameter
     };
     render() {
-        const { errors } = this.state;
-
         return (
             <Container style={{ marginTop: '3em' }}>
                 <Row>
@@ -75,11 +75,11 @@ class Login extends Component {
                                 <Form.Label htmlFor="email">E-postadress</Form.Label>
                                 <Form.Control type="email" placeholder="E-postadress" onChange={this.onChange}
                                     value={this.state.email}
-                                    isInvalid={errors.email}
+                                    isInvalid={this.props.errors.payload.email}
                                     id="email"
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.email}
+                                {this.props.errors.payload.email}
                                 </Form.Control.Feedback>
                             </Form.Group>
 
@@ -87,11 +87,11 @@ class Login extends Component {
                                 <Form.Label htmlFor="password">Lösenord</Form.Label>
                                 <Form.Control type="password" placeholder="Lösenord" onChange={this.onChange}
                                     value={this.state.password}
-                                    isInvalid={errors.password}
+                                    isInvalid={this.props.errors.payload.password}
                                     id="password"
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.password}
+                                {this.props.errors.payload.password}
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Button variant="primary" type="submit">
@@ -118,5 +118,5 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    { loginUser }
+    { loginUser, clearErrors }
 )(Login);

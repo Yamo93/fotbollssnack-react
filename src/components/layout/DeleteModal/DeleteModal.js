@@ -18,7 +18,7 @@ class DeleteModal extends Component {
             </Modal.Header>
             <Modal.Body>
                 <h5>Vill du radera följande inlägg?</h5>
-                <p><strong>Användarnamn:</strong> {this.props.deletedPost.userName}</p>
+                <p><strong>Användarnamn:</strong> {this.props.deletedPost.nickname ? this.props.deletedPost.nickname : this.props.deletedPost.userName}</p>
                 <p><strong>Inlägg:</strong> {this.props.deletedPost.text}</p>
                 <p><strong>Datum:</strong> {moment(this.props.deletedPost.date).format('YYYY-MM-DD HH:mm')}</p>
             </Modal.Body>

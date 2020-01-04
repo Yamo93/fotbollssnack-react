@@ -10,7 +10,7 @@ import Button from 'react-bootstrap/Button';
 import { Link, withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { registerUser } from '../../../actions/authActions';
+import { registerUser, clearErrors } from '../../../actions/authActions';
 
 class Register extends Component {
     constructor() {
@@ -18,6 +18,8 @@ class Register extends Component {
         this.state = {
             name: "",
             email: "",
+            nickname: "",
+            favoriteclub: "",
             password: "",
             password2: "",
             errors: {}
@@ -25,6 +27,8 @@ class Register extends Component {
     }
 
     componentDidMount() {
+        // Rensar gamla felmeddelanden
+        this.props.clearErrors();
         // If logged in and user navigates to Register page, should redirect them to dashboard
         if (this.props.auth.isAuthenticated) {
             this.props.history.push("/dashboard");
@@ -50,20 +54,26 @@ class Register extends Component {
             name: this.state.name,
             email: this.state.email,
             password: this.state.password,
-            password2: this.state.password2
+            password2: this.state.password2,
+            nickname: this.state.nickname,
+            favoriteclub: this.state.favoriteclub
         };
 
         this.props.registerUser(newUser, this.props.history);
     };
     render() {
-        const { errors } = this.state;
+        const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        
         return (
-            <Container style={{ marginTop: '3em' }}>
+            <Container style={{ marginTop: '3em', paddingBottom: '4em' }}>
                 <Row>
                     <Col>
-                        <Link to="/" className="btn-flat waves-effect">
+                        <Link to="/" >
                             Tillbaka till startsidan
                         </Link>
+                        </Col>
+                        </Row>
+                        <Row>
                         <Col>
                             <h4>
                                 <b>Bli medlem</b>
@@ -72,18 +82,22 @@ class Register extends Component {
                                 Redan medlem? <Link to="/login">Logga in här istället.</Link>
                             </p>
                         </Col>
+                        </Row>
+                        <Row>
+                            <Col>
                         <Form noValidate onSubmit={this.onSubmit}>
                             <Form.Group>
                                 <Form.Label htmlFor="name">Namn</Form.Label>
                                 <Form.Control onChange={this.onChange}
                                     placeholder="Namn"
                                     value={this.state.name}
-                                    isInvalid={errors.name}
+                                    isValid={this.state.name !== ''}
+                                    isInvalid={this.props.errors.payload.name}
                                     id="name"
                                     type="text"
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.name}
+                                    {this.props.errors.payload.name}
                                 </Form.Control.Feedback>
                             </Form.Group>
 
@@ -91,11 +105,12 @@ class Register extends Component {
                                 <Form.Label htmlFor="email">E-postadress</Form.Label>
                                 <Form.Control type="email" placeholder="E-postadress" onChange={this.onChange}
                                     value={this.state.email}
-                                    isInvalid={errors.email}
+                                    isValid={emailRegExp.test(String(this.state.email).toLowerCase())}
+                                    isInvalid={this.props.errors.payload.email}
                                     id="email"
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.email}
+                                    {this.props.errors.payload.email}
                                 </Form.Control.Feedback>
                             </Form.Group>
 
@@ -103,24 +118,50 @@ class Register extends Component {
                                 <Form.Label htmlFor="password">Lösenord</Form.Label>
                                 <Form.Control type="password" placeholder="Lösenord" onChange={this.onChange}
                                     value={this.state.password}
-                                    isInvalid={errors.password}
+                                    isValid={this.state.password !== '' && this.state.password.length >= 6 && this.state.password.length <= 30}
+                                    isInvalid={this.props.errors.payload.password}
                                     id="password"
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.password}
+                                    {this.props.errors.payload.password}
                                 </Form.Control.Feedback>
                             </Form.Group>
-
                             <Form.Group>
                                 <Form.Label htmlFor="password2">Bekräfta lösenord</Form.Label>
                                 <Form.Control type="password" placeholder="Bekräfta lösenord" onChange={this.onChange}
                                     value={this.state.password2}
-                                    isInvalid={errors.password2}
+                                    isValid={this.state.password2 !== '' && this.state.password2.length >= 6 && this.state.password2.length <= 30 && this.state.password === this.state.password2}
+                                    isInvalid={this.props.errors.payload.password2}
                                     id="password2"
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.password2}
+                                    {this.props.errors.payload.password2}
                                 </Form.Control.Feedback>
+                            </Form.Group>
+                            <hr />
+                            <Form.Group>
+                                <Form.Label htmlFor="nickname">Vad vill du heta på forumet?</Form.Label>
+                                <Form.Control onChange={this.onChange}
+                                    placeholder="Användarnamn"
+                                    value={this.state.nickname}
+                                    isValid={this.state.nickname !== ''}
+                                    isInvalid={this.props.errors.payload.nickname}
+                                    id="nickname"
+                                    type="text"
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {this.props.errors.payload.nickname}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label htmlFor="favoriteclub">Vilket är din favoritklubb?</Form.Label>
+                                <Form.Control onChange={this.onChange}
+                                    placeholder="Favoritklubb"
+                                    value={this.state.favoriteclub}
+                                    isValid={this.state.favoriteclub !== ''}
+                                    id="favoriteclub"
+                                    type="text"
+                                />
                             </Form.Group>
                             <Button variant="primary" type="submit">
                                 Bli medlem
@@ -146,5 +187,5 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    { registerUser }
+    { registerUser, clearErrors }
 )(withRouter(Register));

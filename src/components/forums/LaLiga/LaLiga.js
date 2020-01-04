@@ -10,6 +10,8 @@ import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
+import Pagination from 'react-bootstrap/Pagination';
+import Badge from 'react-bootstrap/Badge';
 
 import EditModal from '../../layout/EditModal/EditModal';
 import DeleteModal from '../../layout/DeleteModal/DeleteModal';
@@ -20,7 +22,7 @@ import { connect } from "react-redux";
 
 import moment from 'moment';
 
-import { setCurrentForum, fetchForumPosts, addForumPost, updateForumPost, deleteForumPost, setForumInterval, hideToast } from '../../../actions/forumActions';
+import { setCurrentForum, fetchForumPosts, addForumPost, updateForumPost, deleteForumPost, setForumInterval, hideToast, setCurrentForumPage } from '../../../actions/forumActions';
 
 class LaLiga extends Component {
 
@@ -112,7 +114,7 @@ class LaLiga extends Component {
                             aria-label="Username"
                             aria-describedby="basic-addon1"
                             disabled
-                            value={this.props.auth.user.name.split(' ')[0]}
+                            value={this.props.auth.user.nickname ? this.props.auth.user.nickname : this.props.auth.user.name.split(' ')[0]}
                         />
                     </InputGroup>
                     <InputGroup style={{ marginBottom: '1em' }}>
@@ -133,7 +135,7 @@ class LaLiga extends Component {
         }
 
         return (
-            <Container style={{ height: "75vh", marginTop: '3em', position: 'relative' }}>
+            <Container style={{ marginTop: '3em', position: 'relative' }}>
                 <Toast style={{
                     position: 'absolute',
                     top: 0,
@@ -176,12 +178,23 @@ class LaLiga extends Component {
                 </Row>
                 <Row>
                     <Col>
+                        <Pagination>
+                            {this.props.forum.laLigaPostPages ? this.props.forum.laLigaPostPages.map(postPage => <Pagination.Item key={postPage} onClick={(forumPageId, forumType) => this.props.onSetCurrentForumPage(postPage, 'laliga')} active={this.props.forum.currentLaLigaForumPage === postPage}>{postPage}</Pagination.Item>) : null}
+                        </Pagination>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
                         {spinner}
                         <ListGroup>
-                            {this.props.forum.laLigaPosts ? this.props.forum.laLigaPosts.map(llp => (
+                            {this.props.forum.laLigaPaginatedPostsToShow ? this.props.forum.laLigaPaginatedPostsToShow.map(llp => llp? (
                                 <ListGroup.Item key={llp._id}>
                                     <div className="d-flex w-100 justify-content-between">
-                                        <h5 className="mb-1">{llp.userName}</h5>
+                                        <h5 className="mb-1">{llp.nickname ? llp.nickname : llp.userName}
+                                        {llp.favoriteclub ? <Badge style={{ marginLeft: '5px', fontSize: '12px' }} pill variant="success">
+                                            {llp.favoriteclub}
+                                        </Badge> : null}
+                                        </h5>
                                         <small>{llp.updatedDate ? <span style={{ color: 'red' }}>(Redigerad {moment(llp.updatedDate).format('YYYY-MM-DD HH:mm')})</span> : null} {moment(llp.date).format('YYYY-MM-DD HH:mm')}</small>
                                     </div>
                                     <div className="d-flex w-100 justify-content-start">
@@ -197,7 +210,7 @@ class LaLiga extends Component {
                                     </ButtonToolbar>) : null}
                                 </ListGroup.Item>
 
-                            )) : null}
+                            ) : null) : null}
                         </ListGroup>
 
                     </Col>
@@ -221,7 +234,8 @@ const mapDispatchToProps = dispatch => {
         onUpdateForumPost: postData => dispatch(updateForumPost(postData)),
         onDeleteForumPost: postData => dispatch(deleteForumPost(postData)),
         onSetInterval: (forumType, interval) => dispatch(setForumInterval(forumType, interval)),
-        onHideToast: () => dispatch(hideToast())
+        onHideToast: () => dispatch(hideToast()),
+        onSetCurrentForumPage: (forumPageId, forumType) => dispatch(setCurrentForumPage(forumPageId, forumType))
     };
 };
 

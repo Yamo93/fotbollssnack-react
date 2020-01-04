@@ -18,7 +18,19 @@ const initialState = {
     numberOfSerieAPages: 0,
     paginatedSerieAPosts: {},
     currentSerieAForumPage: 1,
-    serieAPosts: []
+    serieAPosts: [],
+    numberOfPremierLeaguePages: 0,
+    paginatedPremierLeaguePosts: {},
+    currentPremierLeagueForumPage: 1,
+    premierLeaguePosts: [],
+    numberOfLaLigaPages: 0,
+    paginatedLaLigaPosts: {},
+    currentLaLigaForumPage: 1,
+    laLigaPosts: [],
+    numberOfAllsvenskanPages: 0,
+    paginatedAllsvenskanPosts: {},
+    currentAllsvenskanForumPage: 1,
+    allsvenskanPosts: [],
 };
 export default function (state = initialState, action) {
     switch (action.type) {
@@ -37,6 +49,37 @@ export default function (state = initialState, action) {
             switch (action.forumType) {
                 case 'premierleague':
                     updatedState.premierLeaguePosts = action.posts;
+
+                    // Pagination
+                    //Räknar ut antalet sidor och avrundar uppåt, och sparar antal sidor för forumet
+                    updatedState.numberOfPremierLeaguePages = Math.ceil(action.posts.length / postsPerPage);
+
+                    // Klonar arrayen
+                    const copiedPremierLeaguePages = [...action.posts];
+
+                    // Skapar ett objekt med sidonummer som nycklar
+                    const paginatedPremierLeaguePosts = {};
+
+                    // Skapar en array med sidonummer
+                    const arrayWithPremierLeaguePageNumbers = [];
+                    for (let i = 1; i <= updatedState.numberOfPremierLeaguePages; i++) {
+                        arrayWithPremierLeaguePageNumbers.push(i);
+                    }
+
+                    updatedState.premierLeaguePostPages = arrayWithPremierLeaguePageNumbers;
+
+                    // Fyller värdena med posts för den specifika sidan
+                    for (const page of arrayWithPremierLeaguePageNumbers) {
+                        paginatedPremierLeaguePosts[page] = [];
+                        for (let i = 0; i < postsPerPage; i++) {
+                            paginatedPremierLeaguePosts[page].push(copiedPremierLeaguePages.shift());
+                        }
+                    }
+
+                    updatedState.paginatedPremierLeaguePosts = paginatedPremierLeaguePosts;
+
+                    // Visar nuvarande sidan
+                    updatedState.premierLeaguePaginatedPostsToShow = updatedState.paginatedPremierLeaguePosts[updatedState.currentPremierLeagueForumPage];
                     break;
                 case 'seriea':
                     updatedState.serieAPosts = action.posts;
@@ -73,14 +116,76 @@ export default function (state = initialState, action) {
 
                     updatedState.paginatedSerieAPosts = paginatedPosts;
 
-                    // Visar första sidan
-                    updatedState.serieAPaginatedPostsToShow = updatedState.paginatedSerieAPosts[1];
+                    // Visar nuvarande sidan
+                    updatedState.serieAPaginatedPostsToShow = updatedState.paginatedSerieAPosts[updatedState.currentSerieAForumPage];
                     break;
                 case 'laliga':
                     updatedState.laLigaPosts = action.posts;
+
+                    // Pagination
+                    //Räknar ut antalet sidor och avrundar uppåt, och sparar antal sidor för forumet
+                    updatedState.numberOfLaLigaPages = Math.ceil(action.posts.length / postsPerPage);
+
+                    // Klonar arrayen
+                    const copiedLaLigaPages = [...action.posts];
+
+                    // Skapar ett objekt med sidonummer som nycklar
+                    const paginatedLaLigaPosts = {};
+
+                    // Skapar en array med sidonummer
+                    const arrayWithLaLigaPageNumbers = [];
+                    for (let i = 1; i <= updatedState.numberOfLaLigaPages; i++) {
+                        arrayWithLaLigaPageNumbers.push(i);
+                    }
+
+                    updatedState.laLigaPostPages = arrayWithLaLigaPageNumbers;
+
+                    // Fyller värdena med posts för den specifika sidan
+                    for (const page of arrayWithLaLigaPageNumbers) {
+                        paginatedLaLigaPosts[page] = [];
+                        for (let i = 0; i < postsPerPage; i++) {
+                            paginatedLaLigaPosts[page].push(copiedLaLigaPages.shift());
+                        }
+                    }
+
+                    updatedState.paginatedLaLigaPosts = paginatedLaLigaPosts;
+
+                    // Visar första sidan
+                    updatedState.laLigaPaginatedPostsToShow = updatedState.paginatedLaLigaPosts[updatedState.currentLaLigaForumPage];
                     break;
                 case 'allsvenskan':
                     updatedState.allsvenskanPosts = action.posts;
+
+                    // Pagination
+                    //Räknar ut antalet sidor och avrundar uppåt, och sparar antal sidor för forumet
+                    updatedState.numberOfAllsvenskanPages = Math.ceil(action.posts.length / postsPerPage);
+
+                    // Klonar arrayen
+                    const copiedAllsvenskanPages = [...action.posts];
+
+                    // Skapar ett objekt med sidonummer som nycklar
+                    const paginatedAllsvenskanPosts = {};
+
+                    // Skapar en array med sidonummer
+                    const arrayWithAllsvenskanPageNumbers = [];
+                    for (let i = 1; i <= updatedState.numberOfAllsvenskanPages; i++) {
+                        arrayWithAllsvenskanPageNumbers.push(i);
+                    }
+
+                    updatedState.allsvenskanPostPages = arrayWithAllsvenskanPageNumbers;
+
+                    // Fyller värdena med posts för den specifika sidan
+                    for (const page of arrayWithAllsvenskanPageNumbers) {
+                        paginatedAllsvenskanPosts[page] = [];
+                        for (let i = 0; i < postsPerPage; i++) {
+                            paginatedAllsvenskanPosts[page].push(copiedAllsvenskanPages.shift());
+                        }
+                    }
+
+                    updatedState.paginatedAllsvenskanPosts = paginatedAllsvenskanPosts;
+
+                    // Visar nuvarande sidan
+                    updatedState.allsvenskanPaginatedPostsToShow = updatedState.paginatedAllsvenskanPosts[updatedState.currentAllsvenskanForumPage];
                     break;
                 default:
                     break;
@@ -139,6 +244,7 @@ export default function (state = initialState, action) {
             switch (action.forumType) {
                 case 'premierleague':
                     stateWithCurrentForumPage.currentPremierLeagueForumPage = action.forumPageId;
+                    stateWithCurrentForumPage.premierLeaguePaginatedPostsToShow = stateWithCurrentForumPage.paginatedPremierLeaguePosts[action.forumPageId];
                     break;
                 case 'seriea':
                     stateWithCurrentForumPage.currentSerieAForumPage = action.forumPageId;
@@ -146,9 +252,11 @@ export default function (state = initialState, action) {
                     break;
                 case 'laliga':
                     stateWithCurrentForumPage.currentLaLigaForumPage = action.forumPageId;
+                    stateWithCurrentForumPage.laLigaPaginatedPostsToShow = stateWithCurrentForumPage.paginatedLaLigaPosts[action.forumPageId];
                     break;
                 case 'allsvenskan':
                     stateWithCurrentForumPage.currentAllsvenskanForumPage = action.forumPageId;
+                    stateWithCurrentForumPage.allsvenskanPaginatedPostsToShow = stateWithCurrentForumPage.paginatedAllsvenskanPosts[action.forumPageId];
                     break;
                 default:
                     break;

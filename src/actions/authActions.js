@@ -5,11 +5,14 @@ import jwt_decode from "jwt-decode";
 import {
     GET_ERRORS,
     SET_CURRENT_USER,
-    USER_LOADING
+    USER_LOADING,
+    CLEAR_ERRORS, 
+    SET_USER_INFO
 } from "./types";
 
 // Register User
 export const registerUser = (userData, history) => dispatch => {
+    console.log(userData);
     axios
         .post("http://localhost:3000/api/users/register", userData)
         .then(res => history.push("/login")) // re-direct to login on successful register
@@ -34,8 +37,13 @@ export const loginUser = userData => dispatch => {
             setAuthToken(token);
             // Decode token to get user data
             const decoded = jwt_decode(token);
+
+            // Hämta nickname osv
+            dispatch(getUserInfoById(decoded.id));
+
             // Set current user
             dispatch(setCurrentUser(decoded));
+
         })
         .catch(err =>
             dispatch({
@@ -45,11 +53,34 @@ export const loginUser = userData => dispatch => {
         );
 };
 
+export const clearErrors = () => dispatch => {
+    dispatch({
+        type: CLEAR_ERRORS
+    });
+};
+
+// Get user info
+export const getUserInfoById = userId => dispatch => {
+    axios.get("http://localhost:3000/api/users/getuserinfo/" + userId)
+    .then(res => {
+        dispatch(setUserInfo(res.data));
+    })
+    .catch(err => console.log(err));
+}
+
 // Set logged in user
 export const setCurrentUser = decoded => {
     return {
         type: SET_CURRENT_USER,
         payload: decoded
+    };
+};
+
+// Set logged in user
+export const setUserInfo = userInfo => {
+    return {
+        type: SET_USER_INFO,
+        userInfo
     };
 };
 

@@ -24,7 +24,7 @@ class Dashboard extends Component {
     render() {
         const { user } = this.props.auth;
         return (
-            <Container style={{ height: "75vh", marginTop: '3em' }}>
+            <Container style={{ marginTop: '3em' }}>
                 <Row>
                     <Col>
                         <ForumNav />

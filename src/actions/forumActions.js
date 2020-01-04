@@ -170,18 +170,15 @@ export const deleteForumPost = postData => dispatch => {
 
 export const fetchForumPosts = forumType => dispatch => {
     dispatch(showSpinner());
-    console.log('Fetching posts for forum of type ', forumType);
     axios
         .get('http://localhost:3000/api/posts/forums/' + forumType)
         .then(res => {
-            console.log('Fetch successful..');
             dispatch(hideSpinner());
             dispatch(storeForumPosts(res.data, forumType));
             // dispatch(paginatePosts(forumType));
         })
         .catch(err => {
             dispatch(hideSpinner());
-            console.log('Failed to fetch.');
             dispatch({
                 type: GET_ERRORS
             })

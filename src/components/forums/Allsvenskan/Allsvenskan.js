@@ -10,6 +10,8 @@ import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Spinner from 'react-bootstrap/Spinner';
 import Toast from 'react-bootstrap/Toast';
+import Pagination from 'react-bootstrap/Pagination';
+import Badge from 'react-bootstrap/Badge';
 
 import EditModal from '../../layout/EditModal/EditModal';
 import DeleteModal from '../../layout/DeleteModal/DeleteModal';
@@ -20,7 +22,7 @@ import { connect } from "react-redux";
 
 import moment from 'moment';
 
-import { setCurrentForum, fetchForumPosts, addForumPost, updateForumPost, deleteForumPost, setForumInterval, hideToast } from '../../../actions/forumActions';
+import { setCurrentForum, fetchForumPosts, addForumPost, updateForumPost, deleteForumPost, setForumInterval, hideToast, setCurrentForumPage } from '../../../actions/forumActions';
 
 class Allsvenskan extends Component {
 
@@ -111,7 +113,7 @@ class Allsvenskan extends Component {
                             aria-label="Username"
                             aria-describedby="basic-addon1"
                             disabled
-                            value={this.props.auth.user.name.split(' ')[0]}
+                            value={this.props.auth.user.nickname ? this.props.auth.user.nickname : this.props.auth.user.name.split(' ')[0]}
                         />
                     </InputGroup>
                     <InputGroup style={{ marginBottom: '1em' }}>
@@ -132,7 +134,7 @@ class Allsvenskan extends Component {
         }
 
         return (
-            <Container style={{ height: "75vh", marginTop: '3em', position: 'relative' }}>
+            <Container style={{ marginTop: '3em', position: 'relative' }}>
                 <Toast style={{
                     position: 'absolute',
                     top: 0,
@@ -175,12 +177,23 @@ class Allsvenskan extends Component {
                 </Row>
                 <Row>
                     <Col>
+                        <Pagination>
+                            {this.props.forum.allsvenskanPostPages ? this.props.forum.allsvenskanPostPages.map(postPage => <Pagination.Item key={postPage} onClick={(forumPageId, forumType) => this.props.onSetCurrentForumPage(postPage, 'allsvenskan')} active={this.props.forum.currentAllsvenskanForumPage === postPage}>{postPage}</Pagination.Item>) : null}
+                        </Pagination>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
                         {spinner}
                         <ListGroup>
-                            {this.props.forum.allsvenskanPosts ? this.props.forum.allsvenskanPosts.map(ap => (
+                            {this.props.forum.allsvenskanPaginatedPostsToShow ? this.props.forum.allsvenskanPaginatedPostsToShow.map(ap => ap ? (
                                 <ListGroup.Item key={ap._id}>
                                     <div className="d-flex w-100 justify-content-between">
-                                        <h5 className="mb-1">{ap.userName}</h5>
+                                        <h5 className="mb-1">{ap.nickname ? ap.nickname : ap.userName}
+                                        {ap.favoriteclub ? <Badge style={{ marginLeft: '5px', fontSize: '12px' }} pill variant="info">
+                                            {ap.favoriteclub}
+                                        </Badge> : null}
+                                        </h5>
                                         <small>{ap.updatedDate ? <span style={{ color: 'red' }}>(Redigerad {moment(ap.updatedDate).format('YYYY-MM-DD HH:mm')})</span> : null} {moment(ap.date).format('YYYY-MM-DD HH:mm')}</small>
                                     </div>
                                     <div className="d-flex w-100 justify-content-start">
@@ -196,11 +209,11 @@ class Allsvenskan extends Component {
                                     </ButtonToolbar>) : null}
                                 </ListGroup.Item>
 
-                            )) : null}
+                            ) : null) : null}
                         </ListGroup>
-
                     </Col>
                 </Row>
+
             </Container>
         );
     }
@@ -220,7 +233,8 @@ const mapDispatchToProps = dispatch => {
         onUpdateForumPost: postData => dispatch(updateForumPost(postData)),
         onDeleteForumPost: postData => dispatch(deleteForumPost(postData)),
         onSetInterval: (forumType, interval) => dispatch(setForumInterval(forumType, interval)),
-        onHideToast: () => dispatch(hideToast())
+        onHideToast: () => dispatch(hideToast()),
+        onSetCurrentForumPage: (forumPageId, forumType) => dispatch(setCurrentForumPage(forumPageId, forumType))
     };
 };
 

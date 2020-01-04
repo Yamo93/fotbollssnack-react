@@ -1,15 +1,53 @@
+html {
+  height: 100%;
+}
+
+.App {
+  height: 100%;
+}
+
+.container {
+  min-height: 75vh;
+}
+
+#root {
+  height: 100%;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+}
+
 .list-group small {
   text-align: right;
 }
 
 .list-group {
-  margin-bottom: 1rem !important;
+  margin-bottom: 3rem !important;
+  padding-bottom: 2rem;
 }
 
 .pagination {
-  margin-bottom: 3rem !important;
+  margin-bottom: 1rem !important;
 }
 
 .list-group-item {
   border-top-width: 1px !important;
+}
+
+.footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.footer p {
+  font-size: 14px;
+}
+
+@media screen and (max-width: 500px) {
+  .container h5 {
+    font-size: 14px;
+  }
 }

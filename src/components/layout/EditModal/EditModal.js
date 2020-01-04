@@ -26,7 +26,7 @@ class EditModal extends Component {
                             aria-label="Username"
                             aria-describedby="basic-addon1"
                             disabled
-                            value={this.props.auth.user.name ? this.props.auth.user.name.split(' ')[0] : ''}
+                            value={this.props.auth.user.nickname ? this.props.auth.user.nickname : this.props.auth.user.name ? this.props.auth.user.name.split(' ')[0] : ''}
                         />
                     </InputGroup>
                     <InputGroup style={{ marginBottom: '1em' }}>
