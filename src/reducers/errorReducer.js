@@ -10,6 +10,7 @@ const initialState = {
     }
 };
 
+// Reducer som uppdaterar valideringsrelaterad state i store
 export default function (state = initialState, action) {
     switch (action.type) {
         case GET_ERRORS:

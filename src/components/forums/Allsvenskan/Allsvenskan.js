@@ -35,14 +35,17 @@ class Allsvenskan extends Component {
         isDeleteModalOpen: false
     };
 
+    // Uppdaterar textinput
     textChangeHandler = value => {
         this.setState({ postText: value });
     }
 
+    // Uppdaterar textinput för uppdatering av inlägg
     updatedTextChangeHandler = value => {
         this.setState({ updatedText: value });
     }
 
+    // Öppnar edit-modalen
     openEditModal = id => {
         const updatedPost = this.props.forum.allsvenskanPosts.find(post => id === post._id);
         this.setState({
@@ -52,10 +55,12 @@ class Allsvenskan extends Component {
         });
     }
 
+    // Stänger edit-modalen
     closeEditModal = () => {
         this.setState({ isEditModalOpen: false });
     }
 
+    // Öppnar delete-modalen
     openDeleteModal = id => {
         const deletedPost = this.props.forum.allsvenskanPosts.find(post => id === post._id);
         this.setState({
@@ -64,22 +69,26 @@ class Allsvenskan extends Component {
         });
     };
 
+    // Stänger delete-modalen
     closeDeleteModal = () => {
         this.setState({ isDeleteModalOpen: false });
     };
 
+    // Lägger till inlägg
     addPost = () => {
         this.props.onAddForumPost({ text: this.state.postText, forumType: 'allsvenskan' });
 
         this.setState({ postText: '' });
     }
 
+    // Uppdaterar inlägg
     updatePost = () => {
         this.props.onUpdateForumPost({ id: this.state.updatedPost._id, text: this.state.updatedText, forumType: 'allsvenskan' });
 
         this.setState({ updatedText: '', isEditModalOpen: false });
     }
 
+    // Raderar inlägg
     deletePost = () => {
         this.props.onDeleteForumPost({ id: this.state.deletedPost._id, forumType: 'allsvenskan' });
 
@@ -87,20 +96,27 @@ class Allsvenskan extends Component {
     }
 
     componentDidMount() {
+        // Väljer nuvarande forum
         if (this.props.forum.currentForum !== 'allsvenskan') {
             this.props.onSwitchForumNav('allsvenskan');
         }
 
+        // Laddar in senaste inläggen
         this.props.onFetchForumPosts('allsvenskan');
 
+        // Skapar tidsintervall för uppdatering
         const intervalID = setInterval(() => { this.props.onFetchForumPosts('allsvenskan'); }, 30000);
 
         this.props.onSetInterval('allsvenskan', intervalID);
+
+        // Sätter sidan till 1
+        this.props.onSetCurrentForumPage(1, 'allsvenskan');
     }
 
     render() {
         let postInputField = null;
 
+        // Visas endast om användare är inloggad
         if (this.props.auth.isAuthenticated) {
             postInputField = (
                 <>
@@ -129,6 +145,7 @@ class Allsvenskan extends Component {
 
         let spinner = null;
 
+        // Visar endast spinner om foruminlägg laddas in
         if (this.props.forum.loading) {
             spinner = <Spinner animation="border" variant="primary" />;
         }

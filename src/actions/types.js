@@ -1,3 +1,4 @@
+// Action types for Redux
 export const GET_ERRORS = "GET_ERRORS";
 export const CLEAR_ERRORS = "CLEAR_ERRORS";
 export const USER_LOADING = "USER_LOADING";

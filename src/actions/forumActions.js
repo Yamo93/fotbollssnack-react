@@ -4,7 +4,7 @@ import {
     SET_CURRENT_FORUM, GET_ERRORS, STORE_FORUM_POSTS, SHOW_SPINNER, HIDE_SPINNER, SET_INTERVAL, SHOW_TOAST, HIDE_TOAST, PAGINATE_POSTS, SET_CURRENT_FORUM_PAGE
 } from './types';
 
-// Set logged in user
+// Väljer nuvarande forum
 export const setCurrentForum = forumType => {
     return {
         type: SET_CURRENT_FORUM,
@@ -12,6 +12,7 @@ export const setCurrentForum = forumType => {
     };
 };
 
+// Sparar senaste inläggen i store
 export const storeForumPosts = (posts, forumType) => {
     return {
         type: STORE_FORUM_POSTS,
@@ -20,6 +21,7 @@ export const storeForumPosts = (posts, forumType) => {
     };
 };
 
+// Paginering för inläggen
 export const paginatePosts = forumType => {
     return {
         type: PAGINATE_POSTS,
@@ -27,6 +29,7 @@ export const paginatePosts = forumType => {
     };
 };
 
+// Väljer nuvarande sida på forumet
 export const setCurrentForumPage = (forumPageId, forumType) => {
     return {
         type: SET_CURRENT_FORUM_PAGE,
@@ -35,27 +38,30 @@ export const setCurrentForumPage = (forumPageId, forumType) => {
     };
 };
 
+// Visar spinner
 export const showSpinner = () => {
     return {
         type: SHOW_SPINNER
     };
 };
 
+// Döljer spinner
 export const hideSpinner = () => {
     return {
         type: HIDE_SPINNER
     };
 };
 
+// Visar toast
 export const showToast = (message, colorClass) => {
     return {
         type: SHOW_TOAST,
         message,
         colorClass
-        // toastType
     };
 };
 
+// Gömmer toast
 export const hideToast = message => {
     return {
         type: HIDE_TOAST,
@@ -63,7 +69,7 @@ export const hideToast = message => {
     };
 };
 
-
+// Sätter tidsintervall för uppdatering av foruminlägg
 export const setForumInterval = (forumType, interval) => {
     return {
         type: SET_INTERVAL,
@@ -72,6 +78,7 @@ export const setForumInterval = (forumType, interval) => {
     };
 };
 
+// Skapar nytt inlägg
 export const addForumPost = postData => dispatch => {
     dispatch(showSpinner());
     axios
@@ -104,6 +111,7 @@ export const addForumPost = postData => dispatch => {
         });
 };
 
+// Uppdaterar foruminlägg
 export const updateForumPost = postData => dispatch => {
     axios
         .put('https://murmuring-citadel-51726.herokuapp.com/api/posts/' + postData.id, postData)
@@ -136,6 +144,7 @@ export const updateForumPost = postData => dispatch => {
         });
 };
 
+// Raderar foruminlägg
 export const deleteForumPost = postData => dispatch => {
     axios
         .delete('https://murmuring-citadel-51726.herokuapp.com/api/posts/' + postData.id)
@@ -167,7 +176,7 @@ export const deleteForumPost = postData => dispatch => {
         });
 };
 
-
+// Hämtar senaste foruminläggen
 export const fetchForumPosts = forumType => dispatch => {
     dispatch(showSpinner());
     axios
@@ -175,7 +184,6 @@ export const fetchForumPosts = forumType => dispatch => {
         .then(res => {
             dispatch(hideSpinner());
             dispatch(storeForumPosts(res.data, forumType));
-            // dispatch(paginatePosts(forumType));
         })
         .catch(err => {
             dispatch(hideSpinner());

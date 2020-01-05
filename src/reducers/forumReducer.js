@@ -34,11 +34,13 @@ const initialState = {
 };
 export default function (state = initialState, action) {
     switch (action.type) {
+        // Väljer nuvarande forum
         case SET_CURRENT_FORUM:
             return {
                 ...state,
                 currentForum: action.payload
             };
+        // Sparar foruminlägg i store (med paginering)
         case STORE_FORUM_POSTS:
             const updatedState = {
                 ...state
@@ -50,7 +52,7 @@ export default function (state = initialState, action) {
                 case 'premierleague':
                     updatedState.premierLeaguePosts = action.posts;
 
-                    // Pagination
+                    // Paginering
                     //Räknar ut antalet sidor och avrundar uppåt, och sparar antal sidor för forumet
                     updatedState.numberOfPremierLeaguePages = Math.ceil(action.posts.length / postsPerPage);
 
@@ -191,53 +193,7 @@ export default function (state = initialState, action) {
                     break;
             }
             return updatedState;
-        case PAGINATE_POSTS:
-            const stateWithPagination = {
-                ...state
-            };
-            // const postsPerPage = 5;
-
-            switch (action.forumType) {
-                case 'premierleague':
-                    break;
-                case 'seriea':
-                    // Räknar ut antalet sidor
-                    const pages = stateWithPagination.serieAPosts.length / postsPerPage;
-
-                    // Klonar arrayen
-                    const copiedPages = [...stateWithPagination.serieAPosts];
-
-                    // Sparar antal sidor för forumet
-                    stateWithPagination.numberOfSerieAPages = pages;
-
-                    // Skapar ett objekt med sidonummer som nycklar
-                    const paginatedPosts = {};
-
-                    // Skapar en array med sidonummer
-                    const arrayWithPageNumbers = Array.from(Array(pages).keys());
-                    const postPages = [];
-                    arrayWithPageNumbers.forEach(arrayPageNumber => postPages.push(arrayPageNumber + 1));
-                    // Sparar arrayen i state
-                    stateWithPagination.serieAPostPages = postPages;
-
-                    // Fyller värdena med posts för den specifika sidan
-                    for (const page of postPages) {
-                        paginatedPosts[page] = [];
-                        for (let i = 0; i < postsPerPage; i++) {
-                            paginatedPosts[page].push(copiedPages.shift());
-                        }
-                    }
-
-                    stateWithPagination.paginatedSerieAPosts = paginatedPosts;
-                    break;
-                case 'laliga':
-                    break;
-                case 'allsvenskan':
-                    break;
-                default:
-                    break;
-            }
-            return stateWithPagination;
+        // Väljer nuvarande forumsida
         case SET_CURRENT_FORUM_PAGE:
             const stateWithCurrentForumPage = { ...state };
 
@@ -263,16 +219,19 @@ export default function (state = initialState, action) {
             }
 
             return stateWithCurrentForumPage;
+        // Visar spinner
         case SHOW_SPINNER:
             return {
                 ...state,
                 loading: true
             };
+        // Döljer spinner
         case HIDE_SPINNER:
             return {
                 ...state,
                 loading: false
             };
+        // Visar toast
         case SHOW_TOAST:
             return {
                 ...state,
@@ -280,11 +239,13 @@ export default function (state = initialState, action) {
                 toastColorClass: action.colorClass,
                 toastMessage: action.message
             };
+        // Döljer toast
         case HIDE_TOAST:
             return {
                 ...state,
                 isToastShowing: false
             };
+        // Sätter tidsintervall för forumuppdatering
         case SET_INTERVAL:
             const newlyUpdatedState = {
                 ...state

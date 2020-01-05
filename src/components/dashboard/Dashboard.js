@@ -13,6 +13,7 @@ import { setCurrentForum } from '../../actions/forumActions';
 class Dashboard extends Component {
 
     componentDidMount() {
+        // Nollställer typ av forum
         this.props.onSwitchForumNav('');
     }
 
